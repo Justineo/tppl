@@ -20,6 +20,7 @@
 <script src="./js/easytemplate.js"></script>
 <script src="./js/underscore.js"></script>
 <script src="./js/yaya-template.js"></script>
+<script src="./js/etpl.js"></script>
 
 
 <script>
@@ -42,8 +43,8 @@ for (var i = 0; i < length; i ++) {
         user: '<strong style="color:red">糖饼</strong>',
         site: 'http://www.planeart.cn',
         weibo: 'http://weibo.com/planeart',
-        QQweibo: 'http://t.qq.com/tangbin'  
-    }); 
+        QQweibo: 'http://t.qq.com/tangbin'
+    });
 };
 
 
@@ -73,7 +74,7 @@ var testList = [
         }
     },
 
-    
+
     {
         name: 'doT',
         tester: function (source) {
@@ -93,7 +94,7 @@ var testList = [
             for (var i = 0; i < number; i ++) {
                 template.render(data);
             }
-            
+
         }
     },
 
@@ -111,7 +112,7 @@ var testList = [
             }
         }
     },
-    
+
     {
         name: 'Handlebars',
         tester: function (source) {
@@ -122,8 +123,8 @@ var testList = [
             }
         }
     },
-    
-    
+
+
     {
         name: 'Mustache',
         tester: function (source) {
@@ -144,7 +145,7 @@ var testList = [
             }
         }
     },
-    
+
     // easyTemplate 太慢，可能导致浏览器停止响应
     /*
     {
@@ -169,7 +170,17 @@ var testList = [
             }
         }
     },
-    
+
+    {
+        name: 'etpl',
+        tester: function (source) {
+            var fn = etpl.compile(source);
+            for (var i = 0; i < number; i ++) {
+                fn(data);
+            }
+        }
+    }
+
     // baiduTemplate 太慢，可能导致浏览器停止响应
     /*
     {
@@ -183,7 +194,7 @@ var testList = [
             }
         }
     },*/
-    
+
     // jqueryTmpl 太慢，可能导致浏览器停止响应
     /*{
         name: 'jqueryTmpl',
@@ -194,8 +205,8 @@ var testList = [
             }
         }
     },*/
-    
-    
+
+
 ];
 
 
@@ -222,7 +233,7 @@ var startTest = function () {
     Timer.prototype.stop = function(){
         return + new Date - this.startTime;
     };
-    
+
     var colors = Highcharts.getOptions().colors;
     var categories = [];
 
@@ -244,7 +255,7 @@ var startTest = function () {
         subtitle: {
             text: /*length + ' 条数据 × ' + */compile + ' 次编译 + ' + number*compile + ' 次渲染'
         },
-                
+
         xAxis: {
             categories: categories,
             labels: {
@@ -293,14 +304,14 @@ var startTest = function () {
         }]
 
     });
-    
+
     var log = function (message) {
         document.getElementById('log').innerHTML = message;
     };
-    
+
     var tester = function (target) {
-    
-        
+
+
         var source = document.getElementById(target.name).innerHTML
           , tplstr = '';
         for(var i=0;i<tplnum;i++){
@@ -314,28 +325,28 @@ var startTest = function () {
             target.tester(tplstr);
         }
         var endTime = time.stop();
-        
+
         chart.series[0].addPoint({
             color: colors.shift(),
             y: endTime
         });
-        
-        
+
+
         if (!testList.length) {
             log('测试已完成，请不要迷恋速度');
             return;
         }
 
         target = testList.shift();
-        
+
         log('正在测试: ' + target.name + '..');
-        
+
         setTimeout(function () {
             tester(target);
         }, 500);
-        
+
     };
-    
+
     var target = testList.shift();
     log('正在测试: ' + target.name + '..');
     tester(target);
@@ -388,7 +399,7 @@ var startTest = function () {
 <!-- yayatemplate 的模板 -->
 <script id="YayaTemplate" type="text/tmpl">
 {$<ul>$}
-    for (var i = 0, l = list.length; i < l; i ++) { 
+    for (var i = 0, l = list.length; i < l; i ++) {
         {$<li>用户: {%list[i].user%}/ 网站：{%list[i].site%}</li>$}
     }
 {$</ul>$}
@@ -465,7 +476,7 @@ var startTest = function () {
 <ul>
   <& for (var val, i = 0, l = @list.length; i < l; i ++) { &>
         <& val = @list[i]; &>
-        <li>用户: <&= val.user &>； 网站：<&= val.site &></li> 
+        <li>用户: <&= val.user &>； 网站：<&= val.site &></li>
   <& } &>
 </ul>
 </script>
@@ -478,6 +489,16 @@ var startTest = function () {
     <% } %>
 </ul>
 </script>
+
+<!-- etpl 的模板 -->
+<script id="etpl" type="text/tmpl">
+<ul>
+<!-- for: ${list} as ${item} -->
+    <li>用户：${item.user|raw}/ 网站：${item.site|raw}</li>
+<!-- /for -->
+</ul>
+</script>
+
 <link type="text/css" rel="stylesheet" href="chrome-extension://cpngackimfmofbokmjmljamhdncknpmg/style.css"><script type="text/javascript" charset="utf-8" src="chrome-extension://cpngackimfmofbokmjmljamhdncknpmg/page_context.js"></script></head>
 
 <body screen_capture_injected="true">
